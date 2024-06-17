@@ -1,0 +1,117 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_LENGTH 1000
+
+// Global buffer to store the text
+char buffer[MAX_LENGTH];
+
+// Function to print the current text in the buffer
+void printText() {
+    printf("Current Text: %s\n", buffer);
+}
+
+// Function to cut text from start to end index and update buffer
+void cutText(int start, int end) {
+    if (start >= 0 && end < MAX_LENGTH && start <= end) {
+        // Copy text to be cut
+        char cut[MAX_LENGTH];
+        strncpy(cut, buffer + start, end - start + 1);
+
+        // Shift remaining text left
+        memmove(buffer + start, buffer + end + 1, strlen(buffer + end + 1) + 1);
+
+        printf("Cut Text: %s\n", cut);
+    } else {
+        printf("Invalid range for cut operation.\n");
+    }
+}
+
+// Function to copy text from start to end index
+void copyText(int start, int end) {
+    if (start >= 0 && end < MAX_LENGTH && start <= end) {
+        // Copy text to be copied
+        char copy[MAX_LENGTH];
+        strncpy(copy, buffer + start, end - start + 1);
+
+        printf("Copied Text: %s\n", copy);
+    } else {
+        printf("Invalid range for copy operation.\n");
+    }
+}
+
+// Function to paste text at given index
+void pasteText(int index) {
+    char paste[MAX_LENGTH];
+    printf("Enter text to paste: ");
+    fgets(paste, MAX_LENGTH, stdin);
+
+    // Remove newline character from paste
+    paste[strcspn(paste, "\n")] = '\0';
+
+    if (index >= 0 && index <= strlen(buffer)) {
+        // Shift existing text right to make space for pasted text
+        memmove(buffer + index + strlen(paste), buffer + index, strlen(buffer + index) + 1);
+        
+        // Copy paste text into buffer
+        strncpy(buffer + index, paste, strlen(paste));
+
+        printf("Pasted Text: %s\n", buffer);
+    } else {
+        printf("Invalid index for paste operation.\n");
+    }
+}
+
+int main() {
+    // Initialize buffer with empty string
+    buffer[0] = '\0';
+
+    int choice;
+    int start, end, index;
+
+    while (1) {
+        printf("\nText Editor Menu:\n");
+        printf("1. Print Text\n");
+        printf("2. Cut Text (Specify start and end indices)\n");
+        printf("3. Copy Text (Specify start and end indices)\n");
+        printf("4. Paste Text (Specify index)\n");
+        printf("5. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printText();
+                break;
+            case 2:
+                printf("Enter start index: ");
+                scanf("%d", &start);
+                printf("Enter end index: ");
+                scanf("%d", &end);
+                cutText(start, end);
+                break;
+            case 3:
+                printf("Enter start index: ");
+                scanf("%d", &start);
+                printf("Enter end index: ");
+                scanf("%d", &end);
+                copyText(start, end);
+                break;
+            case 4:
+                printf("Enter index to paste: ");
+                scanf("%d", &index);
+                getchar(); // Consume newline left by scanf
+                pasteText(index);
+                break;
+            case 5:
+                printf("Exiting...\n");
+                exit(0);
+            default:
+                printf("Invalid choice. Please enter a valid option.\n");
+                break;
+        }
+    }
+
+    return 0;
+}
